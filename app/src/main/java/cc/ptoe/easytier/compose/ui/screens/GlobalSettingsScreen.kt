@@ -142,7 +142,6 @@ internal fun GlobalSettingsScreen(
                     }
                     OverrideListField(stringResource(R.string.editor_manual_routes), profile.manualRoutes, settings.manualRoutes) { onGlobalSettings(settings.copy(manualRoutes = it)) }
                     OverrideBoolField(stringResource(R.string.editor_enable_exit_node), profile.enableExitNode, settings.enableExitNode) { onGlobalSettings(settings.copy(enableExitNode = it)) }
-                    OverrideListField(stringResource(R.string.editor_exit_nodes), profile.exitNodes, settings.exitNodes) { onGlobalSettings(settings.copy(exitNodes = it)) }
                 }
             }
         }

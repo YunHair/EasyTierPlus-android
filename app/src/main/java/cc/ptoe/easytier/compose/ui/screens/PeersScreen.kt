@@ -20,6 +20,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cc.ptoe.easytier.compose.R
@@ -74,17 +76,17 @@ internal fun PeersScreen(state: EasyTierUiState) {
                         ),
                     ) {
                         Row(
-                            modifier = Modifier.padding(20.dp),
+                            modifier = Modifier.padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Router,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = if (peer.isExitNode) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(28.dp),
                             )
-                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 Text(
                                     text = if (peer.hostname.equals("unknown", ignoreCase = true)) stringResource(R.string.value_unknown) else peer.hostname,
                                     style = MaterialTheme.typography.titleMedium,
@@ -95,6 +97,42 @@ internal fun PeersScreen(state: EasyTierUiState) {
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    PeerBadge(
+                                        text = peerConnectionLabel(peer),
+                                        containerColor = if (peer.connectionType.equals("P2P", ignoreCase = true)) {
+                                            MaterialTheme.colorScheme.primaryContainer
+                                        } else {
+                                            MaterialTheme.colorScheme.tertiaryContainer
+                                        },
+                                        contentColor = if (peer.connectionType.equals("P2P", ignoreCase = true)) {
+                                            MaterialTheme.colorScheme.onPrimaryContainer
+                                        } else {
+                                            MaterialTheme.colorScheme.onTertiaryContainer
+                                        },
+                                    )
+                                    if (peer.isExitNode) {
+                                        PeerBadge(
+                                            text = stringResource(R.string.peer_badge_exit_node),
+                                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                                        )
+                                    }
+                                    if (peer.proxyCidrs.isNotEmpty()) {
+                                        PeerBadge(
+                                            text = stringResource(R.string.peer_badge_routes, peer.proxyCidrs.size),
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                        )
+                                    }
+                                    if (peer.isPublicServer) {
+                                        PeerBadge(
+                                            text = stringResource(R.string.peer_badge_public_server),
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
                             }
                             Text(
                                 text = peer.latencyMs?.let { stringResource(R.string.latency_ms, it) }
@@ -139,10 +177,37 @@ private fun PeerDetailsDialog(peer: RuntimePeer, onDismiss: () -> Unit) {
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 PeerDetailRow(stringResource(R.string.detail_nat_type), localizedNatType(peer.natType))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                PeerDetailRow(
+                    stringResource(R.string.peer_detail_exit_node),
+                    stringResource(if (peer.isExitNode) R.string.value_yes else R.string.value_no),
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                PeerDetailRow(
+                    stringResource(R.string.peer_detail_public_server),
+                    stringResource(if (peer.isPublicServer) R.string.value_yes else R.string.value_no),
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                PeerDetailRow(
+                    stringResource(R.string.peer_detail_routes),
+                    peer.proxyCidrs.joinToString(", ").ifEmpty { null },
+                )
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) } },
     )
+}
+
+@Composable
+private fun PeerBadge(text: String, containerColor: Color, contentColor: Color) {
+    Surface(color = containerColor, shape = MaterialTheme.shapes.small) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+        )
+    }
 }
 
 @Composable

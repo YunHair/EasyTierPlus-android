@@ -94,6 +94,14 @@
     <string name="peer_detail_connection">连接</string>
     <string name="peer_detail_tunnel">隧道</string>
     <string name="peer_detail_loss_rate">丢包率</string>
+    <string name="peer_detail_exit_node">出口节点</string>
+    <string name="peer_detail_public_server">公网节点</string>
+    <string name="peer_detail_routes">通告路由</string>
+    <string name="peer_badge_exit_node">出口</string>
+    <string name="peer_badge_routes">路由 %1$d</string>
+    <string name="peer_badge_public_server">公网</string>
+    <string name="value_yes">是</string>
+    <string name="value_no">否</string>
     <plurals name="peer_count">
         <item quantity="other">%1$d 个节点</item>
     </plurals>
@@ -162,7 +170,7 @@
     <string name="editor_tld_dns_zone">TLD DNS 区域</string>
     <string name="editor_manual_routes">手动路由</string>
     <string name="editor_enable_exit_node">启用出口节点</string>
-    <string name="editor_exit_nodes">出口节点</string>
+    <string name="editor_exit_node_hint">使用哪个出口节点请在首页选择，连接后也可随时下拉切换。</string>
     <string name="editor_ipv6_public_address">IPv6 公网地址</string>
     <string name="editor_provider">提供方</string>
     <string name="editor_auto">自动</string>

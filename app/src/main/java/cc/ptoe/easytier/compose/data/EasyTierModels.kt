@@ -308,7 +308,6 @@ data class GlobalSettings(
     val proxyNetworks: List<ProxyNetwork>? = null,
     val manualRoutes: List<String>? = null,
     val enableExitNode: Boolean? = null,
-    val exitNodes: List<String>? = null,
     // IPv6 public address provider
     val ipv6PublicAddrProvider: Boolean? = null,
     val ipv6PublicAddrAuto: Boolean? = null,
@@ -386,7 +385,6 @@ fun GlobalSettings.mergeInto(profile: EasyTierProfile): EasyTierProfile = profil
     proxyNetworks = proxyNetworks ?: profile.proxyNetworks,
     manualRoutes = manualRoutes ?: profile.manualRoutes,
     enableExitNode = enableExitNode ?: profile.enableExitNode,
-    exitNodes = exitNodes ?: profile.exitNodes,
     ipv6PublicAddrProvider = ipv6PublicAddrProvider ?: profile.ipv6PublicAddrProvider,
     ipv6PublicAddrAuto = ipv6PublicAddrAuto ?: profile.ipv6PublicAddrAuto,
     ipv6PublicAddrPrefix = ipv6PublicAddrPrefix ?: profile.ipv6PublicAddrPrefix,
@@ -448,7 +446,8 @@ enum class RuntimeState {
 /**
  * Snapshot of a remote peer observed via collectNetworkInfos.
  *
- * List display shows only [hostname], [virtualIpv4] and [latencyMs];
+ * List display shows [hostname], [virtualIpv4], [latencyMs] plus status badges
+ * ([connectionType], [isExitNode], [proxyCidrs], [isPublicServer]);
  * the remaining fields are surfaced in a details dialog.
  */
 @Serializable
@@ -461,6 +460,12 @@ data class RuntimePeer(
     val lossRate: Double?,
     val natType: String,
     val cost: Int,
+    /** 该节点是否把 0.0.0.0/0（或 ::/0）当作子网代理通告，即可作为出口节点。 */
+    val isExitNode: Boolean = false,
+    /** 该节点通告的全部子网代理路由（proxy_cidrs）。 */
+    val proxyCidrs: List<String> = emptyList(),
+    /** 是否为公网服务器（feature_flag.is_public_server）。 */
+    val isPublicServer: Boolean = false,
 )
 
 /**

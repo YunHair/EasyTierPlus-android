@@ -118,7 +118,11 @@ internal fun ProfileEditorScreen(
                 ProxyNetworkListField(profile.proxyNetworks, error("proxyNetworks")) { v -> update { it.copy(proxyNetworks = v) } }
                 ListField(stringResource(R.string.editor_manual_routes), profile.manualRoutes, error("manualRoutes")) { v -> update { it.copy(manualRoutes = v) } }
                 SwitchRow(stringResource(R.string.editor_enable_exit_node), profile.enableExitNode) { checked -> update { it.copy(enableExitNode = checked) } }
-                ListField(stringResource(R.string.editor_exit_nodes), profile.exitNodes, error("exitNodes")) { v -> update { it.copy(exitNodes = v) } }
+                Text(
+                    text = stringResource(R.string.editor_exit_node_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
 

@@ -95,6 +95,14 @@
     <string name="peer_detail_connection">Connection</string>
     <string name="peer_detail_tunnel">Tunnel</string>
     <string name="peer_detail_loss_rate">Loss rate</string>
+    <string name="peer_detail_exit_node">Exit node</string>
+    <string name="peer_detail_public_server">Public server</string>
+    <string name="peer_detail_routes">Advertised routes</string>
+    <string name="peer_badge_exit_node">Exit node</string>
+    <string name="peer_badge_routes">%1$d routes</string>
+    <string name="peer_badge_public_server">Public node</string>
+    <string name="value_yes">Yes</string>
+    <string name="value_no">No</string>
     <plurals name="peer_count">
         <item quantity="one">%1$d peer</item>
         <item quantity="other">%1$d peers</item>
@@ -176,7 +184,7 @@
     <string name="editor_tld_dns_zone">TLD DNS zone</string>
     <string name="editor_manual_routes">Manual routes</string>
     <string name="editor_enable_exit_node">Enable exit node</string>
-    <string name="editor_exit_nodes">Exit nodes</string>
+    <string name="editor_exit_node_hint">Select which exit node to use on the home screen (changeable after connecting).</string>
     <string name="editor_ipv6_public_address">IPv6 Public Address</string>
     <string name="editor_provider">Provider</string>
     <string name="editor_auto">Auto</string>

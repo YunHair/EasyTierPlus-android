@@ -111,7 +111,30 @@ fun JsonElement.peerRoutePair(): RuntimePeer? {
         c.jsonObject["tunnel"]?.jsonObject?.get("tunnel_type")?.jsonPrimitive?.content?.let(::normalizeTunnelType)
     }.distinct()
     val connectionType = if (cost == 1) "P2P" else "Relay ($cost)"
-    return RuntimePeer(hostname, ipv4, latencyMs, connectionType, tunnelProtos, lossRate, natType, cost)
+
+    // Route metadata advertised by this peer. proxy_cidrs doubles as the
+    // "I am an exit node" signal when it contains the IPv4/IPv6 default route,
+    // mirroring ExitNodeCandidate detection used by the dashboard selector.
+    val proxyCidrs = (route?.get("proxy_cidrs") as? JsonArray)
+        ?.mapNotNull { it.jsonPrimitive.content.takeIf(String::isNotBlank)?.let(String::trim) }
+        ?.distinct()?.sorted().orEmpty()
+    val isExitNode = proxyCidrs.any { it == "0.0.0.0/0" || it == "::/0" }
+    val isPublicServer = route?.get("feature_flag")?.jsonObject
+        ?.get("is_public_server")?.jsonPrimitive?.booleanOrNull == true
+
+    return RuntimePeer(
+        hostname = hostname,
+        virtualIpv4 = ipv4,
+        latencyMs = latencyMs,
+        connectionType = connectionType,
+        tunnelProtos = tunnelProtos,
+        lossRate = lossRate,
+        natType = natType,
+        cost = cost,
+        isExitNode = isExitNode,
+        proxyCidrs = proxyCidrs,
+        isPublicServer = isPublicServer,
+    )
 }
 
 // EasyTier serializes common.Ipv4Inet as { address: { addr: <u32 big-endian> }, network_length }.

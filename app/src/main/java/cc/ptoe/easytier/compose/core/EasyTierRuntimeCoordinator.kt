@@ -204,6 +204,7 @@ class EasyTierRuntimeCoordinator private constructor(
                     peers = info?.peers.orEmpty(),
                     hostname = info?.hostname,
                     natType = info?.natType,
+                    exitNodeCandidates = info?.exitNodeCandidates.orEmpty(),
                 )
                 pollNoTun()
             }
@@ -352,7 +353,14 @@ class EasyTierRuntimeCoordinator private constructor(
                             exitNodeCandidates = info.exitNodeCandidates,
                         )
                     } else {
-                        mutableStatus.value = mutableStatus.value.copy(hostname = info.hostname, natType = info.natType)
+                        // 虚拟 IP 尚未解析出来时也要刷新节点/出口候选，避免首屏选择器
+                        // 长时间空白（peer 与路由信息与本机 IP 无关）。
+                        mutableStatus.value = mutableStatus.value.copy(
+                            peers = info.peers,
+                            hostname = info.hostname,
+                            natType = info.natType,
+                            exitNodeCandidates = info.exitNodeCandidates,
+                        )
                     }
                     refreshWireGuardPortal(profile)
                 }
@@ -409,6 +417,7 @@ class EasyTierRuntimeCoordinator private constructor(
                         peers = it.peers,
                         hostname = it.hostname,
                         natType = it.natType,
+                        exitNodeCandidates = it.exitNodeCandidates,
                     )
                     refreshWireGuardPortal(profile)
                 }

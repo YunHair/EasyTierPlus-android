@@ -66,7 +66,10 @@ class VpnTunTransport(
                     .also { running = false; mutableStatus.value = it }
             }
         }
-        return startPrepared(profile, ipv4Cidr, emptyList())
+        // 静态 IP 场景首次建接口就带上出口节点的默认路由，避免轮询修正前的
+        // 短暂窗口里流量走本机网络（查 IP 仍是本机 IP / IPv6 泄漏）。
+        val initialRoutes = if (profile.exitNodes.any { it.isNotBlank() }) listOf(DEFAULT_ROUTE_V4) else emptyList()
+        return startPrepared(profile, ipv4Cidr, initialRoutes)
     }
 
     /**
@@ -167,6 +170,7 @@ class VpnTunTransport(
 
     private companion object {
         const val TAG = "VpnTunTransport"
+        const val DEFAULT_ROUTE_V4 = "0.0.0.0/0"
         const val DEFAULT_MTU = 1380
         const val VPN_MARKER_ADDRESS = "fd00::1"
         const val PURGE_ATTEMPTS = 4
